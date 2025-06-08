@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Smart Recipe Generator</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color:  rgb(232, 194, 194);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 7vw;
+            background-color: rgb(86, 15, 15);
+            border-bottom: 2px solid rgb(232, 194, 194);
+            box-shadow: 0 2px 20px rgb(105, 52, 52);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+        }
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        .logo img {
+            height: 120px;
+            margin-top: 10px;
+        }
+        .logotext img {
+            height: 80px;
+            margin-top: 10px;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-left: 20px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: #f1c40f;
+        }
+        /* Main Slide (Welcome Section) */
+        .main_slide {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 50px 7vw;
+            background-color: rgb(232, 194, 194);
+            margin-top: 70px; /* Offset for fixed header */
+        }
+        .main_slide div {
+            flex: 1;
+        }
+        .main_slide h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .main_slide h1 span {
+            color: rgb(86, 15, 15);
+            font-style: italic;
+        }
+        .main_slide p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        .red_btn {
+            background-color: rgb(86, 15, 15);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .red_btn:hover {
+            background-color: rgb(105, 52, 52);
+        }
+        .main_slide img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: rgb(232, 194, 194);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .input-choice {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .input-choice p {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .input-choice button {
+            background: rgb(86, 15, 15);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: background 0.3s ease;
+        }
+        .input-choice button:hover {
+            background: rgb(80, 8, 8);
+        }
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            display: none; /* Hidden by default */
+        }
+        form.active {
+            display: block; /* Show when active */
+        }
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+        input[type="text"], input[type="file"] {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        form button {
+            background: rgb(96, 32, 32);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        form button:hover {
+            background: #2980b9;
+        }
+        h2 {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-top: 30px;
+        }
+        .recipe-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 0;
+        }
+        .recipe-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            width: 250px;
+            text-align: center;
+        }
+        .recipe-card:hover {
+            transform: scale(1.05);
+        }
+        .recipe-card img {
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+        }
+        .recipe-card h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .recipe-card a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .recipe-card a:hover {
+            text-decoration: underline;
+        }
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Footer Styles */
+        footer {
+            background-color: rgb(86, 15, 15);
+            color: white;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .footer-section p, .footer-section a {
+            color: #ecf0f1;
+            font-size: 14px;
+            margin: 5px 0;
+            text-decoration: none;
+        }
+        .footer-section a:hover {
+            color: #f1c40f;
+        }
+        .social-icons a {
+            margin: 0 10px;
+            font-size: 20px;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .main_slide {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 5vw;
+            }
+            .main_slide div {
+                margin-bottom: 20px;
+            }
+            .main_slide h1 {
+                font-size: 28px;
+            }
+            .main_slide p {
+                font-size: 14px;
+            }
+            .footer-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .header-container {
+                flex-direction: column;
+            }
+            nav ul {
+                margin-top: 10px;
+            }
+            nav ul li {
+                margin: 0 10px;
+            }
+            .input-choice button {
+                display: block;
+                margin: 10px auto;
+            }
+        }
+    </style>
+    <script>
+        function showForm(formId) {
+            // Hide all forms
+            document.getElementById("textForm").style.display = "none";
+            document.getElementById("imageForm").style.display = "none";
+            // Show the selected form
+            document.getElementById(formId).style.display = "block";
+        }
+
+        function showLoader() {
+            document.getElementById("loader").style.display = "block";
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="static\Logo.png" alt="Smart Recipe Generator Logo">
+        </div>
+        <div class="logotext">
+            <img src="static\logotext.png" alt="Smart Recipe Generator Logo">
+        </div>
+        <div class="header-container">
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/recipes">Recipes</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main_slide">
+        <div>
+            <h1>Welcome to <span>Smart Recipe Generator,</span> where every recipe is a masterpiece.</h1>
+            <p>Discover the joy of cooking with our Smart Recipe Generator. Enter your ingredients or upload an image, and let us craft personalized recipes just for you. Savor the flavors of creativity and convenience your culinary adventure starts here!</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="input-choice">
+            <p>How would you like to input your ingredients?</p>
+            <button type="button" onclick="showForm('textForm')">Enter Ingredients Text</button>
+            <button type="button" onclick="showForm('imageForm')">Upload Image</button>
+        </div>
+
+        <form id="textForm" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+            <label>Enter Ingredients:</label>
+            <input type="text" name="ingredients" placeholder="E.g., Tomato, Cheese, Pasta" required>
+            <button type="submit">Generate Recipes</button>
+        </form>
+        <form id="imageForm" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+            <label>Upload an Image (Ingredient Detection):</label>
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Upload & Predict</button>
+        </form>
+        <div id="loader" class="loader"></div>
+
+        {% if recipes %}
+            <center><h2>Generated Recipes</h2></center>
+            <div class="recipe-list">
+                {% for recipe, image_url in recipes %}
+                    <div class="recipe-card">
+                        <img src="{{ image_url }}" alt="{{ recipe }}" width="250" height="150">
+                        <h3><a href="{{ url_for('recipe_details', recipe_name=recipe, ingredients=request.form.get('ingredients', '')) }}">{{ recipe }}</a></h3>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Smart Recipe Generator helps you create delicious meals from the ingredients you have at home.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: navaneethsiliveri@gmail.com.com</p>
+                <p>Phone:+91 9948189826</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
+                    <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Smart Recipe Generator. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
