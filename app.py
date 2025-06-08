@@ -73,7 +73,7 @@ def generate_recipes(ingredients):
 import requests
 
 # Replace this with your actual Hugging Face API Token
-HUGGING_FACE_API_KEY = "your hugging face api key"
+ <your key>
 
 def generate_recipe_image(recipe_name):
     """Generate an AI food image using Hugging Face's Stable Diffusion API."""
