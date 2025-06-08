@@ -25,7 +25,7 @@ idx_to_class = {int(k): v for k, v in idx_to_class.items()}
 print("✅ Loaded class indices:", idx_to_class)
 
 # Google AI Studio API (Gemini API) for Recipe Generation
-genai.configure(api_key="AIzaSyB8iFXK8nM8RGwHH3CkgsMZveUnt4zqxuY")
+genai.configure(api_key="your api key")
 #GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateText?key={GOOGLE_API_KEY}"
 
 # Function to Predict Ingredients from Image
@@ -73,7 +73,7 @@ def generate_recipes(ingredients):
 import requests
 
 # Replace this with your actual Hugging Face API Token
-HUGGING_FACE_API_KEY = "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"
+HUGGING_FACE_API_KEY = "your hugging face api key"
 
 def generate_recipe_image(recipe_name):
     """Generate an AI food image using Hugging Face's Stable Diffusion API."""
